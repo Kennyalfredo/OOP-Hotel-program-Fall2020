@@ -12,7 +12,13 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.chrono.ChronoLocalDate;
+import java.time.chrono.ChronoLocalDateTime;
+import java.util.Date;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -49,7 +55,7 @@ public class RecepcionController implements  Initializable {
     Método que presenta habitaciones en recepcion en orden numérico y con sus 
     respectivos datos
     */
-    public void PresentRoom(){
+    public void PresentRoom() throws ParseException{
         paneReservados.getChildren().clear();
     for(ReporteHabs g: ReporteHabs.df){
         if((fechaele.getValue().toString()).equals(g.getDate())){
@@ -76,10 +82,43 @@ public class RecepcionController implements  Initializable {
         paneReservados.getChildren().add(hhab);
         button.setOnAction(e->Accion2(g.getStatus(),g));
         }
-        else if (!(fechaele.getValue().toString()).equals(g.getDate())){
+        else if (before(ParseFecha(fechaele.getValue().toString()),ParseFecha(g.getDate()))||after(ParseFecha(fechaele.getValue().toString()),ParseFecha(g.getDate()))){
+        String img="file:///C:/Users/kenny/Downloads/camas.png";
+        VBox hhab= new VBox();
+        Label label1= new Label("Habitacion nro: "+g.getNumber()+"\n"+"$"+g.getCost()+"\n"+g.getType()+"\n"+"Estado: disponible");
+        ImageView imghab= new ImageView(new Image(img));
+        Button button= new Button();
+        button.setGraphic(imghab);
+        imghab.setFitHeight(100);
+        imghab.setFitWidth(110);
+        hhab.getChildren().addAll(label1,button);
+        paneReservados.getChildren().add(hhab);
+        button.setOnAction(e->Accion2(g.getStatus(),g));
+            
                 }
+       
+        
         }
     }
+    
+     public static Date ParseFecha(String fecha) throws ParseException
+    {
+      SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy");
+        String xfecha=fecha;
+        return formato.parse(xfecha);
+          
+    }
+     public static boolean before(Date dt1, Date dt2){
+     boolean result = dt1.before(dt2);
+     return result;
+     }
+     public static boolean after(Date dt1,Date dt2){
+     boolean result =dt1.after(dt2);
+     return result;
+     
+     }
+     
+    
    
     /*Método que se llama al hacer click a la habitacion 
     deseada y dependiendo de su estado lleva a cabo una accion
